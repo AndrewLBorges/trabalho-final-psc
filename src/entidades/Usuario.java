@@ -1,3 +1,5 @@
+package entidades;
+
 public abstract class Usuario {
     private String nome_completo;
     private long cpf;

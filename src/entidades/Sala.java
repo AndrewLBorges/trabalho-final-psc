@@ -1,3 +1,5 @@
+package entidades;
+
 public class Sala {
     private String nome;
     private String local;

@@ -1,3 +1,5 @@
+package entidades;
+
 public class Professor extends Usuario{
     private long codigo_funcionario;
 

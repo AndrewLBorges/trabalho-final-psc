@@ -1,14 +1,23 @@
+package entidades;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Curso {
     private long codigo;
     private String nome;
     private int carga_horaria;
     private String descricao;
+    private List<Aluno> alunos_matriculados;
+    private Professor professor;
+    private Sala sala;
 
     public Curso(long codigo, String nome, int carga_horaria, String descricao) {
         this.codigo = codigo;
         this.nome = nome;
         this.carga_horaria = carga_horaria;
         this.descricao = descricao;
+        this.alunos_matriculados = new ArrayList<>();
     }
 
     public long getCodigo() {
@@ -41,5 +50,19 @@ public class Curso {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public boolean matricularAluno(Aluno aluno){
+        if(!alunoMatriculado(aluno)){
+            this.alunos_matriculados.add(aluno);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean alunoMatriculado(Aluno aluno){
+        return this.alunos_matriculados
+                .stream()
+                .anyMatch(aluno_matriculado -> aluno_matriculado.getNome_completo().equals(aluno.getNome_completo()));
     }
 }
