@@ -1,5 +1,5 @@
 package interfaces;
 
-public interface Validador {
-    void validar(String input);
+public interface Validador<T> {
+    T validar(T entrada);
 }
