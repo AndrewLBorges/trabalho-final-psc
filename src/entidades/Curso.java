@@ -65,4 +65,20 @@ public class Curso {
                 .stream()
                 .anyMatch(aluno_matriculado -> aluno_matriculado.getNome_completo().equals(aluno.getNome_completo()));
     }
+
+    public boolean cadastrarProfessor(Professor professor){
+        if (professor != null){
+            this.professor = professor;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean cadastrarSala(Sala sala){
+        if (professor != null){
+            this.sala = sala;
+            return true;
+        }
+        return false;
+    }
 }

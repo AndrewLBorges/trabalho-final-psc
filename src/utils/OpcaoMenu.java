@@ -1,0 +1,14 @@
+package utils;
+
+public enum OpcaoMenu {
+    SAIR,
+    CADASTRO_CURSO,
+    CADASTRO_ALUNO,
+    MATRICULA_ALUNO,
+    CADASTRO_SALA,
+    CADASTRO_PROFESSOR,
+    ALOCA_PROFESSOR,
+    ALOCA_SALA,
+    LISTAR_CURSOS,
+    SEM_OPCAO
+}
