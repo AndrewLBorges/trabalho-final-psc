@@ -1,7 +1,9 @@
 import entidades.*;
 import interfaces.Validador;
 import utils.OpcaoMenu;
+import utils.UtilEntrada;
 import validadores.ValidadorEmail;
+import javax.swing.*;
 
 public class SistemaCursos {
     private Validador validador_email;
@@ -14,18 +16,19 @@ public class SistemaCursos {
     public void iniciarSistema(){
         OpcaoMenu opcao = OpcaoMenu.SEM_OPCAO;
 
+        mostrarBoasVindas();
+
         while(opcao != OpcaoMenu.SAIR){
-            mostrarBoasVindas();
             mostrarMenu();
-            //opcao = obterResultadoMenu();
-            //realizarAcaoMenu(opcao);
+            opcao = obterResultadoMenu();
+            realizarAcaoMenu(opcao);
             opcao = OpcaoMenu.SAIR;
         }
         mostrarMensagemSaida();
     }
 
     private void mostrarBoasVindas(){
-        System.out.println("----------------- Bem-vindo(a) ao sistema de cadastro de Cursos -----------------");
+        JOptionPane.showMessageDialog(null, "----------------- Bem-vindo(a) ao sistema de cadastro de Cursos -----------------");
     }
 
     private void mostrarMenu(){
@@ -43,5 +46,23 @@ public class SistemaCursos {
 
     private void mostrarMensagemSaida(){
         System.out.println("\n\nObrigado por usar nosso sistema!!");
+    }
+
+    private OpcaoMenu obterResultadoMenu(){
+        System.out.print("Digite sua opção: ");
+        int opcao = -1;
+
+        while (opcao <0 || opcao > 8){
+            opcao = (int)UtilEntrada.entradaInteira();
+
+            if(opcao < 0 || opcao > 8)
+                System.out.print("\nEntrada Inválida. Tente novamente: ");
+        }
+
+        return OpcaoMenu.valueOf(opcao);
+    }
+
+    private void realizarAcaoMenu(OpcaoMenu opcao){
+
     }
 }

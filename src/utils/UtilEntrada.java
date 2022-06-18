@@ -1,16 +1,37 @@
 package utils;
 
-public class UtilEntrada {
-    public static long entradaInteira(){
+import java.util.Scanner;
 
-        return 0;
+public class UtilEntrada {
+    private static Scanner scanner = new Scanner(System.in);
+    public static long entradaInteira(){
+        long entrada;
+
+        while(!scanner.hasNextInt()){
+            System.out.print("\nNumero invalido, digite novamente: ");
+            scanner.next();
+        }
+        entrada = scanner.nextInt();
+
+        return entrada;
     }
     public static double entradaDecimal(){
+        double entrada;
 
-        return 0.1;
+        while(!scanner.hasNextDouble()){
+            System.out.print("\nNumero invalido, digite novamente: ");
+            scanner.next();
+        }
+        entrada = scanner.nextDouble();
+
+        return entrada;
     }
     public static String entradaDeTexto(){
 
         return "";
+    }
+
+    private void fecharStreamScanner(){
+        scanner.close();
     }
 }
