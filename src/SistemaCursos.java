@@ -17,7 +17,7 @@ public class SistemaCursos {
         while(opcao != OpcaoMenu.SAIR){
             mostrarBoasVindas();
             mostrarMenu();
-            //opcao = pegarResultadoMenu();
+            //opcao = obterResultadoMenu();
             //realizarAcaoMenu(opcao);
             opcao = OpcaoMenu.SAIR;
         }
@@ -29,7 +29,7 @@ public class SistemaCursos {
     }
 
     private void mostrarMenu(){
-        System.out.println("Escolha uma das opções abaixo para continuar: \n\n");
+        System.out.println("Escolha uma das opções abaixo para continuar: \n");
         System.out.println("Cadastrar curso (1)");
         System.out.println("Cadastrar aluno (2)");
         System.out.println("Matricular aluno em um curso (3)");
