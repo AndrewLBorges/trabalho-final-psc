@@ -1,9 +1,12 @@
 package utils;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Scanner;
 
-public class UtilEntrada {
+public class UtilEntrada implements AutoCloseable {
     private static Scanner scanner = new Scanner(System.in);
+
     public static long entradaInteira(){
         long entrada;
 
@@ -27,11 +30,19 @@ public class UtilEntrada {
         return entrada;
     }
     public static String entradaDeTexto(){
+        String entrada;
 
-        return "";
+        while(!scanner.hasNextLine()){
+            System.out.print("\nTexto invalido, digite novamente: ");
+            scanner.next();
+        }
+        entrada = scanner.nextLine();
+
+        return entrada;
     }
 
-    private void fecharStreamScanner(){
+    @Override
+    public void close() throws IOException {
         scanner.close();
     }
 }

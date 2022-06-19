@@ -67,7 +67,7 @@ public class Curso {
     }
 
     public boolean cadastrarProfessor(Professor professor){
-        if (professor != null){
+        if (professor != null && !temProfessorCadastrado()){
             this.professor = professor;
             return true;
         }
@@ -75,10 +75,30 @@ public class Curso {
     }
 
     public boolean cadastrarSala(Sala sala){
-        if (professor != null){
+        if (sala != null && !temSalaCadastrada()){
             this.sala = sala;
             return true;
         }
         return false;
+    }
+
+    public boolean temProfessorCadastrado(){
+        return professor != null;
+    }
+
+    public boolean temSalaCadastrada(){
+        return sala != null;
+    }
+
+    public Professor getProfessor(){
+        return this.professor;
+    }
+
+    public Sala getSala(){
+        return this.sala;
+    }
+
+    public List<Aluno> getAlunos_matriculados(){
+        return this.alunos_matriculados;
     }
 }
