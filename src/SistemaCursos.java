@@ -103,8 +103,6 @@ public class SistemaCursos {
     }
 
     private void cadastrarCurso(){
-        //TODO: adicionar validação pra curso já cadastrado
-
         Curso curso;
         long codigo;
         String nome, descricao;
@@ -112,6 +110,11 @@ public class SistemaCursos {
 
         System.out.print("Digite o codigo do curso: ");
         codigo = UtilEntrada.entradaInteira();
+
+        if(cursoJaCadastrado(codigo)) {
+            System.out.println("Ja foi cadastrado um curso com esse codigo!");
+            return;
+        }
 
         System.out.print("\nDigite o nome do curso: ");
         nome = UtilEntrada.entradaDeTexto();
@@ -127,9 +130,11 @@ public class SistemaCursos {
         cursos.add(curso);
     }
 
-    private void cadastrarAluno(){
-        //TODO: adicionar validação pra aluno já cadastrado
+    private boolean cursoJaCadastrado(long codigoCurso){
+        return cursos.stream().anyMatch(curso -> curso.getCodigo() == codigoCurso);
+    }
 
+    private void cadastrarAluno(){
         Aluno aluno;
         String nome, endereco, email, celular;
         long cpf, matricula;
@@ -152,6 +157,11 @@ public class SistemaCursos {
         System.out.print("\nMatricula do aluno: ");
         matricula = UtilEntrada.entradaInteira();
 
+        if(existeAlunoPorMatricula(matricula)){
+            System.out.println("Ja existe um aluno com esse numero de matricula cadastrado!");
+            return;
+        }
+
         aluno = new Aluno(nome, cpf, endereco, email, celular, matricula);
         alunos.add(aluno);
     }
@@ -173,14 +183,14 @@ public class SistemaCursos {
 
         if(curso == null)
             return;
-        else{
-            if(curso.temProfessorCadastrado() && curso.temSalaCadastrada()){
-                curso.matricularAluno(aluno);
-                aluno.registrarCursoMatriculado(curso);
+
+        if(curso.temProfessorCadastrado() && curso.temSalaCadastrada()) {
+            if(!curso.matricularAluno(aluno) || !aluno.registrarCursoMatriculado(curso)){
+                System.out.println("Aluno ja esta matriculado no curso!");
                 return;
             }
-            System.out.println("Curso nao possui professor ou sala cadastrados. Complete o cadastro do curso para matricular um aluno.");
         }
+        System.out.println("Curso nao possui professor ou sala cadastrados. Complete o cadastro do curso para matricular um aluno.");
     }
 
     private void mostrarListaAlunos(){
@@ -238,14 +248,17 @@ public class SistemaCursos {
     }
 
     private void cadastrarSala(){
-        //TODO: adicionar validação pra sala já cadastrada
-
         Sala sala;
         String nome, local;
         int capacidade;
 
         System.out.print("Nome da sala: ");
         nome = UtilEntrada.entradaDeTexto();
+
+        if(existeSalaPorNome(nome)){
+            System.out.println("Ja existe uma sala com esse nome!");
+            return;
+        }
 
         System.out.print("\nLocal da sala: ");
         local = UtilEntrada.entradaDeTexto();
@@ -258,8 +271,6 @@ public class SistemaCursos {
     }
 
     private void cadastrarProfessor(){
-        //TODO: adicionar validação pra professor já cadastrado
-
         Professor professor;
         String nome, endereco, email, celular;
         long cpf, codigo_funcionario;
@@ -281,6 +292,11 @@ public class SistemaCursos {
 
         System.out.print("\nCodigo de funcionario do professor: ");
         codigo_funcionario = UtilEntrada.entradaInteira();
+
+        if(existeProfessorPorCodigo(codigo_funcionario)){
+            System.out.println("Ja existe professor com esse codigo de funcionario!");
+            return;
+        }
 
         professor = new Professor(nome, cpf, endereco, email, celular, codigo_funcionario);
         professores.add(professor);

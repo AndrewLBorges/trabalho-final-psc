@@ -63,7 +63,7 @@ public class Curso {
     private boolean alunoMatriculado(Aluno aluno){
         return this.alunos_matriculados
                 .stream()
-                .anyMatch(aluno_matriculado -> aluno_matriculado.getNome_completo().equals(aluno.getNome_completo()));
+                .anyMatch(aluno_matriculado -> aluno_matriculado.getMatricula() == aluno.getMatricula());
     }
 
     public boolean cadastrarProfessor(Professor professor){
@@ -83,11 +83,11 @@ public class Curso {
     }
 
     public boolean temProfessorCadastrado(){
-        return professor != null;
+        return this.professor != null;
     }
 
     public boolean temSalaCadastrada(){
-        return sala != null;
+        return this.sala != null;
     }
 
     public Professor getProfessor(){

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Aluno extends Usuario {
     private long matricula;
-    private List<Curso> cursos_matriculados;
+    private List<Curso> cursos_registrados;
 
     public Aluno(String nome_completo, long cpf, String endereco, String email, String celular, long matricula){
         this.setNome_completo(nome_completo);
@@ -13,7 +13,7 @@ public class Aluno extends Usuario {
         this.setEndereco(email);
         this.setCelular(celular);
         this.matricula = matricula;
-        this.cursos_matriculados = new ArrayList<>();
+        this.cursos_registrados = new ArrayList<>();
     }
 
     public long getMatricula() {
@@ -24,7 +24,17 @@ public class Aluno extends Usuario {
         this.matricula = matricula;
     }
 
-    public void registrarCursoMatriculado(Curso curso){
-        this.cursos_matriculados.add(curso);
+    public boolean registrarCursoMatriculado(Curso curso){
+        if(!cursoRegistrado(curso)) {
+            this.cursos_registrados.add(curso);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean cursoRegistrado(Curso curso){
+        return this.cursos_registrados
+                .stream()
+                .anyMatch(cursos_registrado -> cursos_registrado.getCodigo() == curso.getCodigo());
     }
 }
