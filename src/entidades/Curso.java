@@ -1,5 +1,7 @@
 package entidades;
 
+import excecoes.AlunoException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,18 +54,25 @@ public class Curso {
         this.descricao = descricao;
     }
 
-    public boolean matricularAluno(Aluno aluno){
-        if(!alunoMatriculado(aluno)){
+    public void matricularAluno(Aluno aluno) throws AlunoException {
+        if(!alunoMatriculado(aluno) && !ultrapassouCapacidadeDaSala()){
             this.alunos_matriculados.add(aluno);
-            return true;
+            return;
         }
-        return false;
+        if(alunoMatriculado(aluno))
+            throw new AlunoException("Aluno já matriculado!");
+
+        throw new AlunoException("Capacidade de alunos da sala foi excedida!");
     }
 
     private boolean alunoMatriculado(Aluno aluno){
         return this.alunos_matriculados
                 .stream()
                 .anyMatch(aluno_matriculado -> aluno_matriculado.getMatricula() == aluno.getMatricula());
+    }
+
+    private boolean ultrapassouCapacidadeDaSala(){
+        return alunos_matriculados.size() + 1 > sala.getCapacidade();
     }
 
     public boolean cadastrarProfessor(Professor professor){

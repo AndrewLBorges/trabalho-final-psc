@@ -1,4 +1,5 @@
 import entidades.*;
+import excecoes.AlunoException;
 import interfaces.Validador;
 import utils.OpcaoMenu;
 import utils.UtilEntrada;
@@ -185,10 +186,14 @@ public class SistemaCursos {
             return;
 
         if(curso.temProfessorCadastrado() && curso.temSalaCadastrada()) {
-            if(!curso.matricularAluno(aluno) || !aluno.registrarCursoMatriculado(curso)){
-                System.out.println("Aluno ja esta matriculado no curso!");
-                return;
+            try{
+                curso.matricularAluno(aluno);
+                aluno.registrarCursoMatriculado(curso);
             }
+            catch (AlunoException exception){
+                System.out.println(exception.getMessage());
+            }
+            return;
         }
         System.out.println("Curso nao possui professor ou sala cadastrados. Complete o cadastro do curso para matricular um aluno.");
     }
@@ -212,7 +217,7 @@ public class SistemaCursos {
             return alunos.stream().filter(aluno -> aluno.getMatricula() == matricula).findFirst().get();
         }
 
-        System.out.println("Matricula nao existe ou eh incorreta!");
+        System.out.println("Matricula nao existe ou esta incorreta!");
         return null;
     }
 
@@ -363,7 +368,7 @@ public class SistemaCursos {
         if(sala == null)
             return;
 
-        System.out.println("Em qual curso voce deseja cadastrar o professor?");
+        System.out.println("Em qual curso voce deseja alocar a sala?");
         mostrarListaCursos();
         curso = buscarCurso();
 
@@ -404,7 +409,7 @@ public class SistemaCursos {
 
     private void listarDetalhesCursos(){
         for(Curso curso : cursos){
-            if(curso.temProfessorCadastrado() && curso.temSalaCadastrada())
+            if(curso.temProfessorCadastrado() && curso.temSalaCadastrada() && curso.getAlunos_matriculados().size() > 0)
             {
                 System.out.println("Curso de " + curso.getNome() + " ministrado pelo professor " + curso.getProfessor().getNome_completo() + " e cursado pelos seguintes alunos: ");
 

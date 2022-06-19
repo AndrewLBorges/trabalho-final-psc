@@ -1,13 +1,13 @@
 package utils;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Scanner;
 
 public class UtilEntrada implements AutoCloseable {
-    private static Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner;
 
     public static long entradaInteira(){
+        scanner = new Scanner(System.in);
         long entrada;
 
         while(!scanner.hasNextInt()){
@@ -19,6 +19,7 @@ public class UtilEntrada implements AutoCloseable {
         return entrada;
     }
     public static double entradaDecimal(){
+        scanner = new Scanner(System.in);
         double entrada;
 
         while(!scanner.hasNextDouble()){
@@ -30,11 +31,12 @@ public class UtilEntrada implements AutoCloseable {
         return entrada;
     }
     public static String entradaDeTexto(){
+        scanner = new Scanner(System.in);
         String entrada;
 
         while(!scanner.hasNextLine()){
             System.out.print("\nTexto invalido, digite novamente: ");
-            scanner.next();
+            scanner.nextLine();
         }
         entrada = scanner.nextLine();
 
