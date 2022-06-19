@@ -3,8 +3,9 @@ package entidades;
 public class Professor extends Usuario{
     private long codigo_funcionario;
 
-    public Professor(String nome_completo, long cpf, String endereco, String email, String celular, long codigo_funcionario){
+    public Professor(String nome_completo, String cpf, String endereco, String email, String celular, long codigo_funcionario){
         this.setNome_completo(nome_completo);
+        this.setCpf(cpf);
         this.setEndereco(endereco);
         this.setEndereco(email);
         this.setCelular(celular);

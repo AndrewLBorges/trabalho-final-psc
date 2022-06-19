@@ -7,8 +7,9 @@ public class Aluno extends Usuario {
     private long matricula;
     private List<Curso> cursos_registrados;
 
-    public Aluno(String nome_completo, long cpf, String endereco, String email, String celular, long matricula){
+    public Aluno(String nome_completo, String cpf, String endereco, String email, String celular, long matricula){
         this.setNome_completo(nome_completo);
+        this.setCpf(cpf);
         this.setEndereco(endereco);
         this.setEndereco(email);
         this.setCelular(celular);

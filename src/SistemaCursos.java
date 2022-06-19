@@ -81,7 +81,9 @@ public class SistemaCursos {
                 cadastrarAluno();
                 break;
             case MATRICULA_ALUNO:
-                matricularAluno();
+                if(!alunos.isEmpty())
+                    matricularAluno();
+                System.out.println("Nao existem alunos cadastrados para serem matriculados!");
                 break;
             case CADASTRO_SALA:
                 cadastrarSala();
@@ -90,10 +92,14 @@ public class SistemaCursos {
                 cadastrarProfessor();
                 break;
             case ALOCA_PROFESSOR:
-                alocarProfessor();
+                if(!professores.isEmpty())
+                    alocarProfessor();
+                System.out.println("Nao existem professores cadastrados para serem alocados a um curso!");
                 break;
             case ALOCA_SALA:
-                alocarSala();
+                if(!salas.isEmpty())
+                    alocarSala();
+                System.out.println("Nao existem salas cadastradas para serem alocadas a um curso!");
                 break;
             case LISTAR_CURSOS:
                 listarDetalhesCursos();
@@ -137,14 +143,14 @@ public class SistemaCursos {
 
     private void cadastrarAluno(){
         Aluno aluno;
-        String nome, endereco, email, celular;
-        long cpf, matricula;
+        String nome, endereco, email, celular, cpf;
+        long matricula;
 
         System.out.print("Nome do aluno: ");
         nome = UtilEntrada.entradaDeTexto();
 
         System.out.print("\nCpf do aluno: ");
-        cpf = UtilEntrada.entradaInteira();
+        cpf = UtilEntrada.entradaDeTexto();
 
         System.out.print("\nEndereco do aluno: ");
         endereco = UtilEntrada.entradaDeTexto();
@@ -277,14 +283,14 @@ public class SistemaCursos {
 
     private void cadastrarProfessor(){
         Professor professor;
-        String nome, endereco, email, celular;
-        long cpf, codigo_funcionario;
+        String nome, endereco, email, celular, cpf;
+        long codigo_funcionario;
 
         System.out.print("Nome do professor: ");
         nome = UtilEntrada.entradaDeTexto();
 
         System.out.print("\nCpf do professor: ");
-        cpf = UtilEntrada.entradaInteira();
+        cpf = UtilEntrada.entradaDeTexto();
 
         System.out.print("\nEndereco do professor: ");
         endereco = UtilEntrada.entradaDeTexto();
