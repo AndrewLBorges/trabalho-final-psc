@@ -184,7 +184,7 @@ public class SistemaCursos {
 
         aluno = new Aluno(nome, cpf, endereco, email, celular, matricula);
         alunos.add(aluno);
-        conector.inserirSala(aluno);
+        conector.inserirAluno(aluno);
     }
 
     private void matricularAluno(){
@@ -209,6 +209,7 @@ public class SistemaCursos {
             try{
                 curso.matricularAluno(aluno);
                 aluno.registrarCursoMatriculado(curso);
+                conector.matricularAlunoAoCurso((int)curso.getCodigo(), (int)aluno.getMatricula());
             }
             catch (AlunoException exception){
                 System.out.println(exception.getMessage());
@@ -349,6 +350,9 @@ public class SistemaCursos {
         else {
             if(!curso.cadastrarProfessor(professor))
                 System.out.println("Professor ja alocado!");
+            else{
+                conector.alocarProfessorAoCurso((int)curso.getCodigo(), (int)professor.getCodigo_funcionario());
+            }
         }
     }
 

@@ -23,7 +23,7 @@ public class conectorBanco implements  AutoCloseable{
         }
     }
 
-    public void inserirSala(Aluno aluno){
+    public void inserirAluno(Aluno aluno){
         PreparedStatement statement;
 
         try{
@@ -93,6 +93,32 @@ public class conectorBanco implements  AutoCloseable{
             statement = connection.prepareStatement("UPDATE Curso SET nome_sala = ? WHERE codigo = ?");
             statement.setString(1, nomeSala);
             statement.setInt(2, idCurso);
+            statement.executeUpdate();
+        }catch (SQLException exception){
+            System.out.println("Um erro ocorreu ao atualizar o dado no banco de dados.");
+        }
+    }
+
+    public void alocarProfessorAoCurso(int idCurso, int codigo_funcionario){
+        PreparedStatement statement;
+
+        try{
+            statement = connection.prepareStatement("UPDATE Curso SET id_professor = ? WHERE codigo = ?");
+            statement.setInt(1, codigo_funcionario);
+            statement.setInt(2, idCurso);
+            statement.executeUpdate();
+        }catch (SQLException exception){
+            System.out.println("Um erro ocorreu ao atualizar o dado no banco de dados.");
+        }
+    }
+
+    public void matricularAlunoAoCurso(int id_curso, int id_aluno){
+        PreparedStatement statement;
+
+        try{
+            statement = connection.prepareStatement("INSERT INTO Curso_Aluno(id_curso,id_matricula_aluno) VALUES(?,?)");
+            statement.setInt(1, id_curso);
+            statement.setInt(2, id_aluno);
             statement.executeUpdate();
         }catch (SQLException exception){
             System.out.println("Um erro ocorreu ao atualizar o dado no banco de dados.");
