@@ -1,4 +1,4 @@
-package UtilsPersistencia;
+package utilsPersistencia;
 
 import entidades.*;
 import java.sql.Connection;
@@ -83,6 +83,19 @@ public class conectorBanco implements  AutoCloseable{
             statement.executeUpdate();
         } catch(SQLException exception){
             System.out.println("Um erro ocorreu ao cadastrar o dado no banco de dados.");
+        }
+    }
+
+    public void alocarSalaAoCurso(int idCurso, String nomeSala){
+        PreparedStatement statement;
+
+        try{
+            statement = connection.prepareStatement("UPDATE Curso SET nome_sala = ? WHERE codigo = ?");
+            statement.setString(1, nomeSala);
+            statement.setInt(2, idCurso);
+            statement.executeUpdate();
+        }catch (SQLException exception){
+            System.out.println("Um erro ocorreu ao atualizar o dado no banco de dados.");
         }
     }
 

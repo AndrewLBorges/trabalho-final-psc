@@ -1,4 +1,4 @@
-import UtilsPersistencia.conectorBanco;
+import utilsPersistencia.conectorBanco;
 import entidades.*;
 import excecoes.AlunoException;
 import interfaces.Validador;
@@ -399,6 +399,9 @@ public class SistemaCursos {
         else {
             if(!curso.cadastrarSala(sala))
                 System.out.println("Sala ja alocada!");
+            else{
+                conector.alocarSalaAoCurso((int)curso.getCodigo(), sala.getNome());
+            }
         }
     }
 
