@@ -7,7 +7,7 @@ public class Professor extends Usuario{
         this.setNome_completo(nome_completo);
         this.setCpf(cpf);
         this.setEndereco(endereco);
-        this.setEndereco(email);
+        this.setEmail(email);
         this.setCelular(celular);
         this.codigo_funcionario = codigo_funcionario;
     }

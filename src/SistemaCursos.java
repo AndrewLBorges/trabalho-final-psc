@@ -1,3 +1,4 @@
+import UtilsPersistencia.conectorBanco;
 import entidades.*;
 import excecoes.AlunoException;
 import interfaces.Validador;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SistemaCursos {
+    private final conectorBanco conector = new conectorBanco();;
     private Validador<String> validador_email;
     private List<Curso> cursos;
     private List<Aluno> alunos;
@@ -81,9 +83,11 @@ public class SistemaCursos {
                 cadastrarAluno();
                 break;
             case MATRICULA_ALUNO:
-                if(!alunos.isEmpty())
+                if(!alunos.isEmpty()) {
                     matricularAluno();
-                System.out.println("Nao existem alunos cadastrados para serem matriculados!");
+                    break;
+                }
+                System.out.println("\nNao existem alunos cadastrados para serem matriculados!");
                 break;
             case CADASTRO_SALA:
                 cadastrarSala();
@@ -92,17 +96,25 @@ public class SistemaCursos {
                 cadastrarProfessor();
                 break;
             case ALOCA_PROFESSOR:
-                if(!professores.isEmpty())
+                if(!professores.isEmpty()) {
                     alocarProfessor();
-                System.out.println("Nao existem professores cadastrados para serem alocados a um curso!");
+                    break;
+                }
+                System.out.println("\nNao existem professores cadastrados para serem alocados a um curso!");
                 break;
             case ALOCA_SALA:
-                if(!salas.isEmpty())
+                if(!salas.isEmpty()) {
                     alocarSala();
-                System.out.println("Nao existem salas cadastradas para serem alocadas a um curso!");
+                    break;
+                }
+                System.out.println("\nNao existem salas cadastradas para serem alocadas a um curso!");
                 break;
             case LISTAR_CURSOS:
-                listarDetalhesCursos();
+                if(!cursos.isEmpty()) {
+                    listarDetalhesCursos();
+                    break;
+                }
+                System.out.println("\nNenhum curso foi cadastrado!");
                 break;
             default:
                 break;
@@ -135,6 +147,7 @@ public class SistemaCursos {
         curso = new Curso(codigo, nome, carga_horaria, descricao);
 
         cursos.add(curso);
+        conector.inserirCurso(curso);
     }
 
     private boolean cursoJaCadastrado(long codigoCurso){
@@ -171,6 +184,7 @@ public class SistemaCursos {
 
         aluno = new Aluno(nome, cpf, endereco, email, celular, matricula);
         alunos.add(aluno);
+        conector.inserirSala(aluno);
     }
 
     private void matricularAluno(){
@@ -279,6 +293,7 @@ public class SistemaCursos {
 
         sala = new Sala(nome, local, capacidade);
         salas.add(sala);
+        conector.inserirSala(sala);
     }
 
     private void cadastrarProfessor(){
@@ -311,6 +326,7 @@ public class SistemaCursos {
 
         professor = new Professor(nome, cpf, endereco, email, celular, codigo_funcionario);
         professores.add(professor);
+        conector.inserirProfessor(professor);
     }
 
     private void alocarProfessor(){
@@ -423,6 +439,7 @@ public class SistemaCursos {
                     System.out.println("- " + aluno.getNome_completo());
                 }
             }
+            System.out.println("O cadastro do curso " + curso.getNome() + " nao foi concluido. Conclua inserindo um professor e uma sala a ele para ver os detalhes.");
         }
     }
 }
