@@ -8,6 +8,7 @@ import utilsPersistencia.GerenciadorRelacionamento;
 import validadores.ValidadorEmail;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SistemaCursos {
     private final Validador<String> validador_email;
@@ -457,18 +458,24 @@ public class SistemaCursos {
 
     private void listarDetalhesCursos(List<Curso> cursos){
         System.out.println("\nDetalhes dos cursos: \n");
-        for(Curso curso : cursos){
-            if(curso.temProfessorCadastrado() && curso.temSalaCadastrada() && curso.getAlunos_matriculados().size() > 0)
-            {
-                System.out.println("- Curso de " + curso.getNome() + " ministrado pelo professor " + curso.getProfessor().getNome_completo() + " e cursado pelos seguintes alunos: ");
 
-                for(Aluno aluno : curso.getAlunos_matriculados()){
-                    System.out.println("\t- " + aluno.getNome_completo());
-                }
+        detalharCursosIncompletos(cursos.stream().filter(curso -> !curso.temProfessorCadastrado() || !curso.temSalaCadastrada() || !(curso.getAlunos_matriculados().size() > 0)).collect(Collectors.toList()));
+        detalharCursosCompletos(cursos.stream().filter(curso -> curso.temProfessorCadastrado() && curso.temSalaCadastrada() && curso.getAlunos_matriculados().size() > 0).collect(Collectors.toList()));
+    }
+
+    private void detalharCursosCompletos(List<Curso> cursos){
+        for(Curso curso : cursos){
+            System.out.println("- Curso de " + curso.getNome() + " ministrado pelo professor " + curso.getProfessor().getNome_completo() + " e cursado pelos seguintes alunos: ");
+
+            for(Aluno aluno : curso.getAlunos_matriculados()){
+                System.out.println("\t- " + aluno.getNome_completo());
             }
-            else{
-                System.out.println("O cadastro do curso " + curso.getNome() + " nao foi concluido. Conclua alocando um professor, uma sala e alunos a ele para ver os detalhes.");
-            }
+        }
+    }
+
+    private void detalharCursosIncompletos(List<Curso> cursos){
+        for(Curso curso : cursos){
+            System.out.println("O cadastro do curso " + curso.getNome() + " nao foi concluido. Conclua alocando um professor, uma sala e alunos a ele para ver os detalhes.");
         }
     }
 }
