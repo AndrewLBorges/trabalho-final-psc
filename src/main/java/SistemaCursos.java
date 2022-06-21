@@ -149,6 +149,8 @@ public class SistemaCursos {
         curso = new Curso(codigo, nome, carga_horaria, descricao);
 
         gerenciadorCursos.cadastrar(curso);
+
+        System.out.println("Curso cadastrado com sucesso!");
     }
 
     private boolean cursoJaCadastrado(long codigoCurso){
@@ -186,6 +188,8 @@ public class SistemaCursos {
 
         aluno = new Aluno(nome, cpf, endereco, email, celular, matricula);
         gerenciadorAlunos.cadastrar(aluno);
+
+        System.out.println("Aluno cadastrado com sucesso!");
     }
 
     private void matricularAluno(){
@@ -299,6 +303,8 @@ public class SistemaCursos {
 
         sala = new Sala(nome, local, capacidade);
         gerenciadorSalas.cadastrar(sala);
+
+        System.out.println("Sala cadastrada com sucesso!");
     }
 
     private void cadastrarProfessor(){
@@ -331,6 +337,8 @@ public class SistemaCursos {
 
         professor = new Professor(nome, cpf, endereco, email, celular, codigo_funcionario);
         gerenciadorProfessores.cadastrar(professor);
+
+        System.out.println("Professor cadastrado com sucesso!");
     }
 
     private void alocarProfessor(){
