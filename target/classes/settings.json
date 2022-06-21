@@ -1,0 +1,3 @@
+{
+  "databaseConnectionString" : "jdbc:sqlserver://treinamento.database.windows.net:1433;database=SistemaCursos;user=usrAndrew@treinamento;password=abCD1234;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
+}
