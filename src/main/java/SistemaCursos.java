@@ -458,7 +458,9 @@ public class SistemaCursos {
                     System.out.println("\t- " + aluno.getNome_completo());
                 }
             }
-            System.out.println("O cadastro do curso " + curso.getNome() + " nao foi concluido. Conclua alocando um professor, uma sala e alunos a ele para ver os detalhes.");
+            else{
+                System.out.println("O cadastro do curso " + curso.getNome() + " nao foi concluido. Conclua alocando um professor, uma sala e alunos a ele para ver os detalhes.");
+            }
         }
     }
 }
