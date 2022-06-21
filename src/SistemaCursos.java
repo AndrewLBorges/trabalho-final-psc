@@ -1,29 +1,29 @@
 import interfaces.GerenciadorEntidades;
-import utilsPersistencia.ConectorBanco;
 import entidades.*;
 import excecoes.AlunoException;
 import interfaces.Validador;
 import utils.OpcaoMenu;
 import utils.UtilEntrada;
+import utilsPersistencia.GerenciadorRelacionamento;
 import validadores.ValidadorEmail;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SistemaCursos {
-    private final ConectorBanco conector = new ConectorBanco();
     private final Validador<String> validador_email;
-    private List<Curso> cursos;
+    private final GerenciadorEntidades<Curso> gerenciadorCursos;
     private final GerenciadorEntidades<Aluno> gerenciadorAlunos;
     private final GerenciadorEntidades<Professor> gerenciadorProfessores;
     private final GerenciadorEntidades<Sala> gerenciadorSalas;
+    private final GerenciadorRelacionamento gerenciadorRelacionamento;
 
-    public SistemaCursos(GerenciadorEntidades<Aluno> gerenciadorAlunos, GerenciadorEntidades<Professor> gerenciadorProfessores, GerenciadorEntidades<Sala> gerenciadorSalas){
+    public SistemaCursos(GerenciadorEntidades<Aluno> gerenciadorAlunos, GerenciadorEntidades<Professor> gerenciadorProfessores, GerenciadorEntidades<Sala> gerenciadorSalas, GerenciadorEntidades<Curso> gerenciadorCursos){
         this.validador_email = new ValidadorEmail();
-        this.cursos = new ArrayList<>();
+        this.gerenciadorCursos = gerenciadorCursos;
         this.gerenciadorAlunos = gerenciadorAlunos;
         this.gerenciadorProfessores = gerenciadorProfessores;
         this.gerenciadorSalas = gerenciadorSalas;
+        this.gerenciadorRelacionamento = new GerenciadorRelacionamento();
     }
 
     public void iniciarSistema(){
@@ -111,8 +111,9 @@ public class SistemaCursos {
                 System.out.println("\nNao existem salas cadastradas para serem alocadas a um curso!");
                 break;
             case LISTAR_CURSOS:
+                var cursos = gerenciadorCursos.retornarEntidades();
                 if(!cursos.isEmpty()) {
-                    listarDetalhesCursos();
+                    listarDetalhesCursos(cursos);
                     break;
                 }
                 System.out.println("\nNenhum curso foi cadastrado!");
@@ -147,12 +148,12 @@ public class SistemaCursos {
 
         curso = new Curso(codigo, nome, carga_horaria, descricao);
 
-        cursos.add(curso);
-        conector.inserirCurso(curso);
+        gerenciadorCursos.cadastrar(curso);
     }
 
     private boolean cursoJaCadastrado(long codigoCurso){
-        return cursos.stream().anyMatch(curso -> curso.getCodigo() == codigoCurso);
+        return gerenciadorCursos.retornarEntidades()
+                .stream().anyMatch(curso -> curso.getCodigo() == codigoCurso);
     }
 
     private void cadastrarAluno(){
@@ -189,8 +190,14 @@ public class SistemaCursos {
 
     private void matricularAluno(){
         List<Aluno> alunos = gerenciadorAlunos.retornarEntidades();
+        List<Curso> cursos = gerenciadorCursos.retornarEntidades();
         Aluno aluno;
         Curso curso;
+
+        if(alunos.isEmpty() || cursos.isEmpty()) {
+            System.out.println("Cadastre ao menos um aluno e um curso para realizar a matricula!");
+            return;
+        }
 
         System.out.println("Qual aluno voce deseja matricular? ");
         mostrarListaAlunos(alunos);
@@ -200,8 +207,8 @@ public class SistemaCursos {
             return;
 
         System.out.println("Em qual curso voce deseja cadastrar o aluno?");
-        mostrarListaCursos();
-        curso = buscarCurso();
+        mostrarListaCursos(cursos);
+        curso = buscarCurso(cursos);
 
         if(curso == null)
             return;
@@ -210,7 +217,7 @@ public class SistemaCursos {
             try{
                 curso.matricularAluno(aluno);
                 aluno.registrarCursoMatriculado(curso);
-                conector.matricularAlunoAoCurso((int)curso.getCodigo(), (int)aluno.getMatricula());
+                gerenciadorRelacionamento.relacionarAlunoCurso((int)curso.getCodigo(), (int)aluno.getMatricula());
             }
             catch (AlunoException exception){
                 System.out.println(exception.getMessage());
@@ -221,9 +228,6 @@ public class SistemaCursos {
     }
 
     private void mostrarListaAlunos(List<Aluno> alunos){
-        if(alunos.isEmpty())
-            System.out.println("Nao existem alunos cadastrados!");
-
         for(Aluno aluno : alunos){
             System.out.println(aluno.getNome_completo() + ", Matricula: " + aluno.getMatricula());
         }
@@ -243,7 +247,7 @@ public class SistemaCursos {
         return null;
     }
 
-    private void mostrarListaCursos(){
+    private void mostrarListaCursos(List<Curso> cursos){
         if(cursos.isEmpty())
             System.out.println("Nao existem cursos cadastrados!");
 
@@ -252,13 +256,13 @@ public class SistemaCursos {
         }
     }
 
-    private Curso buscarCurso(){
+    private Curso buscarCurso(List<Curso> cursos){
         long codigo;
 
         System.out.println("Digite o codigo do curso no qual deseja cadastrar: ");
         codigo = UtilEntrada.entradaInteira();
 
-        if(existeCursoPorCodigo(codigo)){
+        if(existeCursoPorCodigo(cursos, codigo)){
             return cursos.stream().filter(curso -> curso.getCodigo() == codigo).findFirst().get();
         }
 
@@ -266,7 +270,7 @@ public class SistemaCursos {
         return null;
     }
 
-    private boolean existeCursoPorCodigo(long codigo){
+    private boolean existeCursoPorCodigo(List<Curso> cursos, long codigo){
         return cursos.stream().anyMatch(curso -> curso.getCodigo() == codigo);
     }
 
@@ -294,7 +298,7 @@ public class SistemaCursos {
         capacidade = (int)UtilEntrada.entradaInteira();
 
         sala = new Sala(nome, local, capacidade);
-        conector.inserirSala(sala);
+        gerenciadorSalas.cadastrar(sala);
     }
 
     private void cadastrarProfessor(){
@@ -326,13 +330,19 @@ public class SistemaCursos {
         }
 
         professor = new Professor(nome, cpf, endereco, email, celular, codigo_funcionario);
-        conector.inserirProfessor(professor);
+        gerenciadorProfessores.cadastrar(professor);
     }
 
     private void alocarProfessor(){
         List<Professor> professores = gerenciadorProfessores.retornarEntidades();
+        List<Curso> cursos = gerenciadorCursos.retornarEntidades();
         Professor professor;
         Curso curso;
+
+        if(professores.isEmpty() || cursos.isEmpty()) {
+            System.out.println("Cadastre ao menos um professor e um curso para realizar a alocacao!");
+            return;
+        }
 
         System.out.println("\nQual professor voce deseja matricular? ");
         mostrarListaProfessores(professores);
@@ -342,8 +352,8 @@ public class SistemaCursos {
             return;
 
         System.out.println("Em qual curso voce deseja cadastrar o professor?");
-        mostrarListaCursos();
-        curso = buscarCurso();
+        mostrarListaCursos(cursos);
+        curso = buscarCurso(cursos);
 
         if(curso == null)
             return;
@@ -351,15 +361,12 @@ public class SistemaCursos {
             if(!curso.cadastrarProfessor(professor))
                 System.out.println("Professor ja alocado!");
             else{
-                conector.alocarProfessorAoCurso((int)curso.getCodigo(), (int)professor.getCodigo_funcionario());
+                gerenciadorRelacionamento.relacionarProfessorCurso((int)curso.getCodigo(), (int)professor.getCodigo_funcionario());
             }
         }
     }
 
     private void mostrarListaProfessores(List<Professor> professores){
-        if(professores.isEmpty())
-            System.out.println("Nao existem professores cadastrados!");
-
         for(Professor professor : professores){
             System.out.println(professor.getNome_completo() + ", codigo de funcionario: " + professor.getCodigo_funcionario());
         }
@@ -385,8 +392,14 @@ public class SistemaCursos {
 
     private void alocarSala(){
         List<Sala> salas = gerenciadorSalas.retornarEntidades();
+        List<Curso> cursos = gerenciadorCursos.retornarEntidades();
         Sala sala;
         Curso curso;
+
+        if(salas.isEmpty() || cursos.isEmpty()) {
+            System.out.println("Cadastre ao menos uma sala e um curso para realizar a alocacao!");
+            return;
+        }
 
         System.out.println("Qual sala voce deseja alocar? ");
         mostrarListaSalas(salas);
@@ -396,8 +409,8 @@ public class SistemaCursos {
             return;
 
         System.out.println("Em qual curso voce deseja alocar a sala?");
-        mostrarListaCursos();
-        curso = buscarCurso();
+        mostrarListaCursos(cursos);
+        curso = buscarCurso(cursos);
 
         if(curso == null)
             return;
@@ -405,15 +418,12 @@ public class SistemaCursos {
             if(!curso.cadastrarSala(sala))
                 System.out.println("Sala ja alocada!");
             else{
-                conector.alocarSalaAoCurso((int)curso.getCodigo(), sala.getNome());
+                gerenciadorRelacionamento.relacionarSalaCurso((int) curso.getCodigo(), sala.getNome());
             }
         }
     }
 
     private void mostrarListaSalas(List<Sala> salas){
-        if(salas.isEmpty())
-            System.out.println("Nao existem salas cadastradas!");
-
         for(Sala sala : salas){
             System.out.println(sala.getNome() + ", local: " + sala.getLocal());
         }
@@ -437,17 +447,18 @@ public class SistemaCursos {
         return salas.stream().anyMatch(sala -> sala.getNome().equals(nome));
     }
 
-    private void listarDetalhesCursos(){
+    private void listarDetalhesCursos(List<Curso> cursos){
+        System.out.println("\nDetalhes dos cursos: \n");
         for(Curso curso : cursos){
             if(curso.temProfessorCadastrado() && curso.temSalaCadastrada() && curso.getAlunos_matriculados().size() > 0)
             {
-                System.out.println("Curso de " + curso.getNome() + " ministrado pelo professor " + curso.getProfessor().getNome_completo() + " e cursado pelos seguintes alunos: ");
+                System.out.println("- Curso de " + curso.getNome() + " ministrado pelo professor " + curso.getProfessor().getNome_completo() + " e cursado pelos seguintes alunos: ");
 
                 for(Aluno aluno : curso.getAlunos_matriculados()){
-                    System.out.println("- " + aluno.getNome_completo());
+                    System.out.println("\t- " + aluno.getNome_completo());
                 }
             }
-            System.out.println("O cadastro do curso " + curso.getNome() + " nao foi concluido. Conclua inserindo um professor e uma sala a ele para ver os detalhes.");
+            System.out.println("O cadastro do curso " + curso.getNome() + " nao foi concluido. Conclua alocando um professor, uma sala e alunos a ele para ver os detalhes.");
         }
     }
 }

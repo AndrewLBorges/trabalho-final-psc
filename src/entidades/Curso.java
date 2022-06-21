@@ -110,4 +110,9 @@ public class Curso {
     public List<Aluno> getAlunos_matriculados(){
         return this.alunos_matriculados;
     }
+
+    public void setAlunos_matriculados(List<Aluno> alunosEntrada){
+        if(alunosEntrada != null && !alunosEntrada.isEmpty())
+            this.alunos_matriculados = alunosEntrada;
+    }
 }

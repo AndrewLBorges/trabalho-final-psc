@@ -1,12 +1,11 @@
 package utilsPersistencia;
 
 import entidades.*;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConectorBanco implements  AutoCloseable{
+public class ConectorBanco implements AutoCloseable{
     private static final String URL_BANCO = "jdbc:sqlserver://treinamento.database.windows.net:1433;database=SistemaCursos;user=usrAndrew@treinamento;password=abCD1234;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
     private Connection connection;
 
@@ -36,15 +35,16 @@ public class ConectorBanco implements  AutoCloseable{
             statement.setInt(6, (int)aluno.getMatricula());
             statement.executeUpdate();
         }catch (SQLException exception){
+            System.out.println("Falha ao registar dado!");
         }
     }
 
-    public Aluno buscarAluno(int id_aluno){
+    public Aluno buscarAluno(int idAluno){
         PreparedStatement statement;
 
         try{
             statement = connection.prepareStatement("SELECT * FROM Aluno WHERE id_matricula = ?");
-            statement.setInt(1, id_aluno);
+            statement.setInt(1, idAluno);
 
             ResultSet result = statement.executeQuery();
 
@@ -99,15 +99,16 @@ public class ConectorBanco implements  AutoCloseable{
             statement.setInt(6, (int)professor.getCodigo_funcionario());
             statement.executeUpdate();
         }catch (SQLException exception){
+            System.out.println("Falha ao registar dado!");
         }
     }
 
-    public Professor buscarProfessor(int id_funcionario){
+    public Professor buscarProfessor(int idFuncionario){
         PreparedStatement statement;
 
         try{
             statement = connection.prepareStatement("SELECT * FROM Professor WHERE id_funcionario = ?");
-            statement.setInt(1, id_funcionario);
+            statement.setInt(1, idFuncionario);
 
             ResultSet result = statement.executeQuery();
 
@@ -159,6 +160,7 @@ public class ConectorBanco implements  AutoCloseable{
             statement.setInt(3, sala.getCapacidade());
             statement.executeUpdate();
         }catch (SQLException exception){
+            System.out.println("Falha ao registar dado!");
         }
     }
 
@@ -216,7 +218,80 @@ public class ConectorBanco implements  AutoCloseable{
             statement.setString(4, curso.getDescricao());
             statement.executeUpdate();
         } catch(SQLException exception){
+            System.out.println("Falha ao registar dado!");
         }
+    }
+
+    public Curso buscarCurso(int idCurso){
+        PreparedStatement statement;
+        Curso curso;
+
+        try{
+            statement = connection.prepareStatement("SELECT * FROM Curso WHERE codigo = ?");
+            statement.setInt(1, idCurso);
+
+            ResultSet result = statement.executeQuery();
+
+            if(result.next()){
+                var codigo = result.getInt(1);
+                var nome = result.getString(2);
+                var carga_horaria = result.getInt(3);
+                var descricao = result.getString(4);
+                var id_professor = result.getInt(5);
+                var nome_sala = result.getString(6);
+                var professor = buscarProfessor(id_professor);
+                var sala = buscarSala(nome_sala);
+
+                curso =  new Curso(codigo, nome, carga_horaria, descricao);
+
+                if(professor != null)
+                    curso.cadastrarProfessor(professor);
+                if(sala != null)
+                    curso.cadastrarSala(sala);
+
+                return curso;
+
+            } else
+                return null;
+        }catch (SQLException exception){
+            return null;
+        }
+    }
+
+    public List<Curso> buscarTodosCursos(){
+        List<Curso> cursos = new ArrayList<>();
+        PreparedStatement statement;
+
+        try{
+            Curso curso;
+            statement = connection.prepareStatement("SELECT * FROM Curso");
+
+            ResultSet result = statement.executeQuery();
+
+            while(result.next()){
+                var codigo = result.getInt(1);
+                var nome = result.getString(2);
+                var carga_horaria = result.getInt(3);
+                var descricao = result.getString(4);
+                var id_professor = result.getInt(5);
+                var nome_sala = result.getString(6);
+                var professor = buscarProfessor(id_professor);
+                var sala = buscarSala(nome_sala);
+
+                curso =  new Curso(codigo, nome, carga_horaria, descricao);
+
+                if(professor != null)
+                    curso.cadastrarProfessor(professor);
+                if(sala != null)
+                    curso.cadastrarSala(sala);
+
+                cursos.add(curso);
+            }
+        }catch (SQLException exception){
+            return null;
+        }
+
+        return cursos;
     }
 
     public void alocarSalaAoCurso(int idCurso, String nomeSala){
@@ -231,28 +306,75 @@ public class ConectorBanco implements  AutoCloseable{
         }
     }
 
-    public void alocarProfessorAoCurso(int idCurso, int codigo_funcionario){
+    public void alocarProfessorAoCurso(int idCurso, int codigoFuncionario){
         PreparedStatement statement;
 
         try{
             statement = connection.prepareStatement("UPDATE Curso SET id_professor = ? WHERE codigo = ?");
-            statement.setInt(1, codigo_funcionario);
+            statement.setInt(1, codigoFuncionario);
             statement.setInt(2, idCurso);
             statement.executeUpdate();
         }catch (SQLException exception){
         }
     }
 
-    public void matricularAlunoAoCurso(int id_curso, int id_aluno){
+    public void matricularAlunoAoCurso(int idCurso, int idAluno){
         PreparedStatement statement;
 
         try{
             statement = connection.prepareStatement("INSERT INTO Curso_Aluno(id_curso,id_matricula_aluno) VALUES(?,?)");
-            statement.setInt(1, id_curso);
-            statement.setInt(2, id_aluno);
+            statement.setInt(1, idCurso);
+            statement.setInt(2, idAluno);
             statement.executeUpdate();
         }catch (SQLException exception){
+            System.out.println("Falha ao registar dado!");
         }
+    }
+
+    public List<Curso> buscarCursosAluno(int idAluno){
+        List<Curso> cursos = new ArrayList<>();
+        PreparedStatement statement;
+
+        try{
+            Curso curso;
+            statement = connection.prepareStatement("SELECT * FROM Curso_Aluno WHERE id_matricula_aluno = ?");
+            statement.setInt(1, idAluno);
+
+            ResultSet result = statement.executeQuery();
+
+            while(result.next()){
+                var codigoCurso = result.getInt(1);
+
+                curso =  buscarCurso(codigoCurso);
+                cursos.add(curso);
+            }
+        }catch (SQLException exception){
+            return null;
+        }
+        return cursos;
+    }
+
+    public List<Aluno> buscarAlunosCurso(int idCurso){
+        List<Aluno> alunos = new ArrayList<>();
+        PreparedStatement statement;
+
+        try{
+            Aluno aluno;
+            statement = connection.prepareStatement("SELECT id_matricula_aluno FROM Curso_Aluno WHERE id_curso = ?");
+            statement.setInt(1, idCurso);
+
+            ResultSet result = statement.executeQuery();
+
+            while(result.next()){
+                var codigoCurso = result.getInt(1);
+
+                aluno =  buscarAluno(codigoCurso);
+                alunos.add(aluno);
+            }
+        }catch (SQLException exception){
+            return null;
+        }
+        return alunos;
     }
 
     @Override

@@ -38,4 +38,10 @@ public class Aluno extends Usuario {
                 .stream()
                 .anyMatch(cursos_registrado -> cursos_registrado.getCodigo() == curso.getCodigo());
     }
+
+    public void setCursos_registrados(List<Curso> cursosEntrada){
+        if(cursosEntrada != null && !cursosEntrada.isEmpty())
+            this.cursos_registrados = cursosEntrada;
+    }
+
 }
